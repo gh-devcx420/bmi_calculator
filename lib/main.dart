@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bmi/screens/bmi_homescreen.dart';
-import 'package:bmi/constants_variables.dart';
+import 'package:bmi/components/constants_variables.dart';
 
 void main() {
   runApp(
@@ -32,7 +32,7 @@ class _BMICalculatorState extends State<BMICalculator> {
           overlayColor: kSliderThumbOverlayColour,
         ),
       ),
-      home: const BMIHomeScreen(),
+      home: const BMIHomescreen(),
     );
   }
 }

@@ -1,86 +1,122 @@
-import 'dart:math';
-import 'package:bmi/constants_variables.dart';
 import 'package:flutter/material.dart';
+import 'package:bmi/components/constants_variables.dart';
+import 'dart:math';
 
 class Results {
-  int humanHeight;
-  int humanWeight;
+  int humanHeightInCms;
+  int humanHeightInFeet;
+  int humanHeightInInch;
+  int humanWeightInKgs;
+  int humanWeightInPounds;
   double result = 0;
   Color resultIconColour = kAppIconsColour;
   Color resultTextColour = kAppIconsColour;
+  double convertedWeight = 0.0;
+  double convertedHeight = 0.0;
 
-  Results(this.humanHeight, this.humanWeight);
+  Results(this.humanHeightInCms, this.humanHeightInFeet, this.humanHeightInInch,
+      this.humanWeightInKgs, this.humanWeightInPounds);
+
+  void convertHeight() {
+    if (selectedHeightPreference == HeightPreference.feetInches) {
+      convertedHeight =
+          (humanHeightInFeet * 30.48) + (humanHeightInInch * 2.54);
+    } else {
+      convertedHeight = humanHeightInCms.toDouble();
+    }
+  }
+
+  void convertWeight() {
+    if (selectedWeightPreference == WeightPreference.pounds) {
+      convertedWeight = (humanWeightInPounds * 0.45359237);
+    } else {
+      convertedWeight = humanWeightInKgs.toDouble();
+    }
+  }
 
   double getResultValue() {
     //Calculate the BMI result.
-    result = humanWeight / pow(humanHeight / 100, 2);
-    return result;
+    result = convertedWeight / pow(convertedHeight / 100, 2);
+    if (convertedHeight != 0 &&
+        convertedWeight != 0 &&
+        result > 13.5 &&
+        result < 110) {
+      return result;
+    } else {
+      return 0;
+    }
   }
 
   String getInference() {
     //Calculate the Inference based on above result.
-    if(result >= 40){
+    if (convertedHeight == 0 ||
+        convertedWeight == 0 ||
+        result < 13.5 ||
+        result > 110) {
+      return 'Error! Check the selected Values';
+    } else if (result >= 40 && result < 110) {
       return 'Obese Class 3';
-    }
-    else if(result >= 35){
+    } else if (result >= 35) {
       return 'Obese Class 2';
-    }
-    else if(result >= 30){
+    } else if (result >= 30) {
       return 'Obese Class 1';
-    }
-    else if(result >= 25){
+    } else if (result >= 25) {
       return 'Overweight';
-    }
-    else if(result >= 18.5){
+    } else if (result >= 18.5) {
       return 'Normal';
-    }
-    else if(result >= 17){
+    } else if (result >= 17) {
       return 'Mild Thinness';
-    }
-    else if(result >= 16){
+    } else if (result >= 16) {
       return 'Moderate Thinness';
-    }
-    else {
+    } else {
       return 'Severe Thinness';
     }
   }
 
   String getTip() {
     //Calculate the Tip based on above result.
-    if(result >= 25){
+    if (convertedHeight == 0 ||
+        convertedWeight == 0 ||
+        result < 13.5 ||
+        result > 110) {
+      return '';
+    } else if (result >= 25) {
       return 'More exercise & controlled diet is good for you';
-    }
-    else if(result >= 18.5){
+    } else if (result >= 18.5) {
       return 'Good BMI Score. Doesn\'t hurt to exercise though!';
-    }
-    else {
+    } else {
       return 'Moderate to low exercise & increased food intake is good for you!';
     }
   }
 
-  Color getResultTextColour () {
+  Color getResultTextColour() {
     //Assign the result text colour based on above result.
-    if(result >= 25){
+    if (convertedHeight == 0 ||
+        convertedWeight == 0 ||
+        result < 13.5 ||
+        result > 110) {
       return resultIconColour = Colors.red;
-    }
-    else if(result >= 18.5){
+    } else if (result >= 25 && result <= 110) {
+      return resultIconColour = Colors.red;
+    } else if (result >= 18.5) {
       return resultIconColour = Colors.green;
-    }
-    else {
+    } else {
       return resultIconColour = Colors.orange;
     }
   }
 
-  Color getResultIconColour () {
+  Color getResultIconColour() {
     //Assign the result icon based on above result.
-    //result = humanWeight / pow(humanHeight / 100, 2);
-    if(result >= 25){
+    if (convertedHeight == 0 ||
+        convertedWeight == 0 ||
+        result < 13.5 ||
+        result > 110) {
+      return resultTextColour = Colors.red;
+    } else if (result >= 25) {
       return resultTextColour = Colors.redAccent;
-    }
-    else if(result >= 18.5){
+    } else if (result >= 18.5) {
       return resultTextColour = Colors.lightGreenAccent;
-    }
-    else {
+    } else {
       return resultTextColour = Colors.orangeAccent;
     }
   }

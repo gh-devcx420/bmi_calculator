@@ -1,20 +1,16 @@
-import 'package:bmi/components/result_calculation.dart';
 import 'package:flutter/material.dart';
-import 'package:bmi/constants_variables.dart';
-import 'package:bmi/components/custom_card.dart';
+import 'package:bmi/components/buttons.dart';
+import 'package:bmi/screens/bmi_inputscreen.dart';
+import 'package:bmi/components/constants_variables.dart';
 
-String result = '';
-String inference = '';
-String tip = '';
-
-class BMIHomeScreen extends StatefulWidget {
-  const BMIHomeScreen({Key? key}) : super(key: key);
+class BMIHomescreen extends StatefulWidget {
+  const BMIHomescreen({Key? key}) : super(key: key);
 
   @override
-  State<BMIHomeScreen> createState() => _BMIHomeScreenState();
+  State<BMIHomescreen> createState() => _BMIHomescreenState();
 }
 
-class _BMIHomeScreenState extends State<BMIHomeScreen> {
+class _BMIHomescreenState extends State<BMIHomescreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,13 +22,39 @@ class _BMIHomeScreenState extends State<BMIHomeScreen> {
         ),
       ),
       backgroundColor: kAppPrimaryColour,
-      body: Column(
-        children: [
-          Expanded(
-            //Widget or Space for displaying the final calculated result values, inferences, and healthy tip.
-            flex: 4,
-            child: Container(
-              margin: const EdgeInsets.all(10),
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'What is Body Mass Index ?',
+              style: vAppBarTitleTextStyle,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: kAppBarTextLabelColour,
+                  width: 1.8,
+                ),
+              ),
+              child: Image.asset('lib/assets/BMI.png'),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Body mass index (BMI) is a measure of body fat based on height and weight values of an individual that applies to most adult men and women.',
+              style: vBodyTextStyle,
+              textAlign: TextAlign.justify,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                   kBorderRadius.toDouble(),
@@ -40,133 +62,91 @@ class _BMIHomeScreenState extends State<BMIHomeScreen> {
                 color: kAppSecondaryColour,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Center(
-                        child: Text(
-                          'Result will display here:',
-                          style: vIconLabelTextStyle,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          result,
-                          style: kIconStyle.copyWith(
-                            color: vResultIconColour,
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          inference,
-                          style: vIconLabelTextStyle.copyWith(
-                            color: vResultTextColour,
-                            fontSize: 25,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Center(
-                        child: Text(
-                          tip,
-                          style: vIconLabelTextStyle.copyWith(
-                            color: vResultTextColour,
-                            fontSize: 15,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(10.0),
+                child: RadioButtonRow(
+                  selectHeightRadioButtonRowLabelHeading:
+                      'Select your preferred Height unit ',
+                  radioButton1Label: 'Centimeters',
+                  onChangedR1: (value) {
+                    setState(() {
+                      selectedHeightValue = value;
+                      selectedHeightPreference = HeightPreference.centimeters;
+                    });
+                  },
+                  groupValue1: selectedHeightValue,
+                  radioButton2Label: 'Feet & Inches',
+                  onChangedR2: (value) {
+                    setState(() {
+                      selectedHeightValue = value;
+                      selectedHeightPreference = HeightPreference.feetInches;
+                    });
+                  },
+                  groupValue2: selectedHeightValue,
                 ),
               ),
             ),
-          ),
-          Expanded(
-            //Widget for displaying the height values.
-            flex: 3,
-            child: CustomCard(
-              sliderOnChanged: (double v) {
-                setState(() {
-                  humanHeight = v.toInt();
-                });
-              },
-              cardLabel: 'Height',
-              hwValue: humanHeight,
-              siUnit: 'cm',
-              sliderMin: 0,
-              sliderMax: 220,
-              divisions: 220,
-
+            const SizedBox(
+              height: 10,
             ),
-          ),
-          Expanded(
-            //Widget for displaying weight values.
-            flex: 3,
-            child: CustomCard(
-              sliderOnChanged: (double v) {
-                setState(() {
-                  humanWeight = v.toInt();
-                });
-              },
-              cardLabel: 'Weight',
-              hwValue: humanWeight,
-              siUnit: 'kg',
-              sliderMin: 0,
-              sliderMax: 150,
-              divisions: 150,
-            ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  //Calculate Button.
-                  flex: 1,
-                  child: GestureDetector(
-                    onTap: () {
-                      Results myResult = Results(humanHeight, humanWeight);
-                      setState(() {
-                        result = myResult.getResultValue().toStringAsFixed(2);
-                        vResultIconColour = myResult.getResultIconColour();
-                        vResultTextColour = myResult.getResultTextColour();
-                        inference = myResult.getInference();
-                        tip = myResult.getTip();
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: kAppButtonBackgroundColour,
-                        borderRadius: BorderRadius.circular(
-                          kBorderRadius.toDouble(),
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'CALCULATE',
-                          style: vIconLabelTextStyle.copyWith(
-                            color: kAppButtonLabelTextColour,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  kBorderRadius.toDouble(),
                 ),
-              ],
+                color: kAppSecondaryColour,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: RadioButtonRow(
+                  selectHeightRadioButtonRowLabelHeading:
+                      'Select your preferred Weight unit',
+                  radioButton1Label: 'Kilograms',
+                  onChangedR1: (value) {
+                    setState(() {
+                      selectedWeightValue = value;
+                      selectedWeightPreference = WeightPreference.kilograms;
+                    });
+                  },
+                  groupValue1: selectedWeightValue,
+                  radioButton2Label: 'Pounds',
+                  onChangedR2: (value) {
+                    setState(() {
+                      selectedWeightValue = value;
+                      selectedWeightPreference = WeightPreference.pounds;
+                    });
+                  },
+                  groupValue2: selectedWeightValue,
+                ),
+              ),
             ),
-          )
-        ],
+            const Expanded(
+              child: SizedBox(
+                height: double.infinity,
+              ),
+            ),
+            BottomButton(
+              buttonLabel: 'Go to Calculate page',
+              buttonHeight: 60,
+              onButtonTap: () {
+                if ((selectedHeightPreference == HeightPreference.centimeters ||
+                        selectedHeightPreference ==
+                            HeightPreference.feetInches) &&
+                    (selectedWeightPreference == WeightPreference.kilograms ||
+                        selectedWeightPreference == WeightPreference.pounds)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BMIInputScreen(),
+                    ),
+                  );
+                }
+                setState(() {
+                  resetBMIInputs();
+                });
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
